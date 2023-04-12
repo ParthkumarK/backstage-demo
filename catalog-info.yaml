@@ -1,0 +1,29 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "test-demo"
+  description: "demo"
+  annotations:
+    github.com/project-slug: backstage/backstage
+    backstage.io/techdocs-ref: dir:.
+    lighthouse.com/website-url: https://backstage.io
+spec:
+  type: website
+  lifecycle: experimental
+  owner: "leemills83"
+
+links:
+  - title: Website
+    url: http://localhost:3000
+  - title: Documentation
+    url: http://localhost:3000/docs
+  - title: Storybook
+    url: http://localhost:3000/storybook
+  - title: Discord Chat
+    url: https://discord.com/invite/EBHEGzX
+
+
+# spec:
+#   type: website
+#   lifecycle: production
+#   owner: user:guest

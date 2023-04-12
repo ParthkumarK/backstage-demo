@@ -1,0 +1,217 @@
+app:
+  title: Backstage Demo
+  baseUrl: http://localhost:3000
+
+organization:
+  name: GoZego
+
+backend:
+  # Used for enabling authentication, secret is shared by all backend plugins
+  # See https://backstage.io/docs/auth/service-to-service-auth for
+  # information on the format
+  # auth:
+  #   keys:
+  #     - secret: ${BACKEND_SECRET}
+  baseUrl: http://localhost:7007
+  listen:
+    port: 7007
+    # Uncomment the following host directive to bind to specific interfaces
+    # host: 127.0.0.1
+  csp:
+    connect-src: ["'self'", 'http:', 'https:']
+    # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
+    # Default Helmet Content-Security-Policy values can be removed by setting the key to false
+  cors:
+    origin: http://localhost:3000
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+  # This is for local development only, it is not recommended to use this in production
+  # The production database configuration is stored in app-config.production.yaml
+  database:
+    client: better-sqlite3
+    connection: ':memory:'
+  cache:
+    store: memory
+  # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
+
+integrations:
+  github:
+    - host: github.com
+      # This is a Personal Access Token or PAT from GitHub. You can find out how to generate this token, and more information
+      # about setting up the GitHub integration here: https://backstage.io/docs/getting-started/configuration#setting-up-a-github-integration
+      token: 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
+  # azure:
+  #   - host: dev.azure.com
+  #     token: ${AZURE_TOKEN}
+    ### Example for how to add your GitHub Enterprise instance using the API:
+    # - host: ghe.example.net
+    #   apiBaseUrl: https://ghe.example.net/api/v3
+    #   token: ${GHE_TOKEN}
+  awsS3:
+    - accessKeyId: AKIAQEH5D3Z3WAX5AFC7
+      secretAccessKey: 1D2BtcjkMQUjxuW12wao0XVvHJ6OITkyPnrDAL0R
+
+proxy:
+  ### Example for how to add a proxy endpoint for the frontend.
+  ### A typical reason to do this is to handle HTTPS and CORS for internal services.
+  # '/test':
+  #   target: 'https://example.com'
+  #   changeOrigin: true
+  proxy:
+  '/circleci/api':
+    target: https://circleci.com/api/v1.1
+    headers:
+      Circle-Token: ${CIRCLECI_AUTH_TOKEN}
+
+  '/jenkins/api':
+    target: http://localhost:8080
+    headers:
+      Authorization: ${JENKINS_BASIC_AUTH_HEADER}
+
+  '/travisci/api':
+    target: https://api.travis-ci.com
+    changeOrigin: true
+    headers:
+      Authorization: ${TRAVISCI_AUTH_TOKEN}
+      travis-api-version: '3'
+
+  '/newrelic/apm/api':
+    target: https://api.newrelic.com/v2
+    headers:
+      X-Api-Key: ${NEW_RELIC_REST_API_KEY}
+
+  '/newrelic/api':
+    target: https://api.newrelic.com
+    headers:
+      X-Api-Key: ${NEW_RELIC_USER_KEY}
+
+  '/pagerduty':
+    target: https://api.pagerduty.com
+    headers:
+      Authorization: Token token=${PAGERDUTY_TOKEN}
+
+  '/buildkite/api':
+    target: https://api.buildkite.com/v2/
+    headers:
+      Authorization: ${BUILDKITE_TOKEN}
+
+  '/sentry/api':
+    target: https://sentry.io/api/
+    allowedMethods: ['GET']
+    headers:
+      Authorization: ${SENTRY_TOKEN}
+
+  '/ilert':
+    target: https://api.ilert.com
+    allowedMethods: ['GET', 'POST', 'PUT']
+    allowedHeaders: ['Authorization']
+    headers:
+      Authorization: ${ILERT_AUTH_HEADER}
+
+  '/airflow':
+    target: https://your.airflow.instance.com/api/v1
+    headers:
+      Authorization: ${AIRFLOW_BASIC_AUTH_HEADER}
+
+  '/gocd':
+    target: https://your.gocd.instance.com/go/api
+    allowedMethods: ['GET']
+    allowedHeaders: ['Authorization']
+    headers:
+      Authorization: Basic ${GOCD_AUTH_CREDENTIALS}
+
+  '/dynatrace':
+    target: https://your.dynatrace.instance.com/api/v2
+    headers:
+      Authorization: 'Api-Token ${DYNATRACE_ACCESS_TOKEN}'
+
+  '/stackstorm':
+    target: https://your.stackstorm.instance.com/api
+    headers:
+      St2-Api-Key: ${ST2_API_KEY}
+
+# Reference documentation http://backstage.io/docs/features/techdocs/configuration
+# Note: After experimenting with basic setup, use CI/CD to generate docs
+# and an external cloud storage when deploying TechDocs for production use-case.
+# https://backstage.io/docs/features/techdocs/how-to-guides#how-to-migrate-from-techdocs-basic-to-recommended-deployment-approach
+techdocs:
+  # builder: 'external' # Alternatives - 'external'
+  # generator:
+  #   runIn: 'docker' # Alternatives - 'local'
+  # publisher:
+  #   type: 'awsS3' # Alternatives - 'googleGcs' or 'awsS3' or 'azureBlobStorage' or 'openStackSwift'. Read documentation for using alternatives.
+  #   awsS3:
+  #     bucketName: 'backstage-demo-bucket'
+  builder: 'local' # Alternatives - 'external'
+  generator:  
+    runIn: 'local' # Alternatives - 'local'
+  publisher:
+    type: 'local'
+
+auth:
+  # see https://backstage.io/docs/auth/ to learn about auth providers  
+  environment: development
+  providers:
+    google:
+      development:
+        clientId: 885309115846-94hph820n73k4vrntqipjsmv1mtpbum9.apps.googleusercontent.com
+        clientSecret: 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
+    github:
+      development:
+        clientId: 36d20375173ef28bc815
+        clientSecret: 7eeced0f4d85e250ab6cb5e7394bfcf7329684d4
+
+scaffolder:
+  # see https://backstage.io/docs/features/software-templates/configuration for software template options
+  github:
+    token: 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
+    visibility: public
+  # azure:
+  #   token: ${AZURE_TOKEN}
+  #   visibility: public
+  awsS3:
+    - accessKeyId: AKIAQEH5D3Z3WAX5AFC7
+      secretAccessKey: 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
+catalog:
+  import:
+    entityFilename: catalog-info.yaml
+    pullRequestBranchName: backstage-integration
+  rules:
+    - allow: [Component, System, API, Resource, Location]
+  locations:
+    # Local example data, file locations are relative to the backend process, typically `packages/backend`
+    - type: file
+      target: ../../examples/entities.yaml
+
+    # Local example template
+    - type: file
+      target: ../../examples/template/template.yaml
+      rules:
+        - allow: [Template]
+
+    # Local example organizational data
+    - type: file
+      target: ../../examples/org.yaml
+      rules:
+        - allow: [User, Group]
+
+    ## Uncomment these lines to add more example data
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
+
+    ## Uncomment these lines to add an example org
+    - type: url
+      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
+      rules:
+        - allow: [User, Group]
+
+playlist:
+  title: Collection
+
+
+# "GCP_client_id":"885309115846-94hph820n73k4vrntqipjsmv1mtpbum9.apps.googleusercontent.com"
+# "GCP_client_secret":"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"
+
+
+# npx @techdocs/cli serve
+# npx @techdocs/cli generate
